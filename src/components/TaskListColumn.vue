@@ -1,6 +1,10 @@
 <template>
   <div class="task-list__column column">
-    <div class="column__header column-title" :style="initTitleStyleObj">
+    <div 
+      class="column__header column-title" 
+      :class="{'column-title--wide' : !isGrid}" 
+      :style="initTitleStyleObj"
+    >
       <input
         type="text"
         class="column-title__text"
@@ -32,6 +36,8 @@
     </div>
 
     <draggable
+      class="column__wrapper"
+      :class="{'column__wrapper--wide' : !isGrid}"
       group="tasks"
       :list="column.tasks"
       @add="updateColumnTasks"
@@ -137,6 +143,10 @@ export default {
         this.$store.dispatch('setColumnTitle', colData)
       },
     },
+
+    isGrid() {
+      return this.$store.getters.isGrid
+    },
   },
 
   mounted() {
@@ -153,6 +163,11 @@ export default {
 
 .column {
   $column: &;
+
+  // .column__wrapper--wide
+  &__wrapper--wide {
+    margin-right: 0;
+  }
 
   // .column__header
   &__header {
@@ -177,6 +192,11 @@ export default {
         opacity: 0.5;
         transform: translateX(0);
       }
+    }
+
+    // .column-title--wide
+    &--wide {
+      max-width: none;
     }
   }
 

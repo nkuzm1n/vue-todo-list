@@ -13,6 +13,7 @@
         type="submit"
         class="filter-form__btn filter-form__btn-grid filter-form__btn--active"
         title="В сетку"
+        @click="buildCell"
       ></button>
       <button
         type="submit"
@@ -41,6 +42,11 @@
 <script>
 export default {
   name: 'FilterBar',
+  methods: {
+    buildCell() {
+      this.$store.dispatch('filterByGrid', {})
+    }
+  }
 }
 </script>
 

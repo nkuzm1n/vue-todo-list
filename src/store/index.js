@@ -3,6 +3,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const settingsDefault = {
+  filterOptions: {
+    grid: true,
+    orderBy: 'name'
+  }
+}
+
 export default new Vuex.Store({
   state: {
     tasksData: JSON.parse(localStorage.getItem('tasksData') || '[]'),
@@ -10,6 +17,7 @@ export default new Vuex.Store({
       isNew: false,
     },
     task: {},
+    settings: JSON.parse(localStorage.getItem('settings')) || settingsDefault
   },
 
   mutations: {
@@ -111,6 +119,12 @@ export default new Vuex.Store({
       state.tasksData = colsData
       localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
     },
+
+    changeGrid(state) {
+      state.settings.filterOptions.grid = !state.settings.filterOptions.grid
+
+      localStorage.setItem('AppSettings', JSON.stringify(state.settings))
+    }
   },
 
   actions: {
@@ -138,6 +152,9 @@ export default new Vuex.Store({
     deleteColumn({ commit }, id) {
       commit('deleteColumn', id)
     },
+    filterByGrid({ commit }) {
+      commit('changeGrid')
+    }
   },
 
   getters: {
@@ -148,5 +165,6 @@ export default new Vuex.Store({
         .find(col => col.id === colId)
         ?.tasks.find(task => task.id === id),
     isNewColAdded: s => s.column.isNew,
+    isGrid: s => s.settings.filterOptions.grid
   },
 })

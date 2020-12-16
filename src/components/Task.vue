@@ -1,5 +1,9 @@
 <template>
-  <div class="task" :style="{ borderLeftColor: this.bdLeftColor }">
+  <div 
+    class="task"
+    :class="{'task--wide' : !isGrid}"  
+    :style="{ borderLeftColor: this.bdLeftColor }"
+  >
     <div class="task__header">
       <input
         type="text"
@@ -153,6 +157,9 @@ export default {
         this.$store.dispatch('updateTask', options)
       },
     },
+    isGrid() {
+      return this.$store.getters.isGrid
+    },
   },
 
   mounted() {
@@ -180,6 +187,11 @@ export default {
   border-left-style: solid;
   box-shadow: 1px 1px 6px rgba(37, 34, 55, 0.4);
   cursor: move;
+
+  // .task--wide
+  &--wide {
+    width: auto;
+  }
 
   // .task__header
   &__header {

@@ -1,6 +1,6 @@
 <template>
   <div class="task-list">
-    <div class="task-list__inner">
+    <div class="task-list__inner" :class="{'task-list__inner--row' : !isGrid}">
       <div class="column__wrapper" v-for="col in tasksData" :key="col.id">
         <TaskListColumn :column="col" ref="column" />
       </div>
@@ -32,6 +32,9 @@ export default {
   },
 
   computed: {
+    isGrid() {
+      return this.$store.getters.isGrid
+    },
     tasksData() {
       return this.$store.getters.tasksData
     },
@@ -61,6 +64,11 @@ export default {
     padding-left: 10px;
     padding-bottom: 25px;
     overflow-x: auto;
+
+    &--row {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 }
 
