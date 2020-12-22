@@ -13,14 +13,14 @@
         type="submit"
         class="filter-form__btn filter-form__btn-grid"
         title="В сетку"
-        :class="{'filter-form__btn--active' : isGrid}"
+        :class="{ 'filter-form__btn--active': isGrid }"
         @click.prevent="buildCell"
       ></button>
       <button
         type="submit"
         class="filter-form__btn filter-form__btn-list"
         title="Списком"
-        :class="{'filter-form__btn--active' : !isGrid}"
+        :class="{ 'filter-form__btn--active': !isGrid }"
         @click.prevent="buildRow"
       ></button>
       <button
@@ -51,13 +51,13 @@ export default {
     },
     buildRow() {
       this.isGrid && this.$store.dispatch('filterByGrid')
-    }
+    },
   },
   computed: {
     isGrid() {
       return this.$store.getters.isGrid
     },
-  }
+  },
 }
 </script>
 
