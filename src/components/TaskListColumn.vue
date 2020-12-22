@@ -3,36 +3,46 @@
     <div
       class="column__header column-title"
       :class="{ 'column-title--wide': !isGrid }"
-      :style="initTitleStyleObj"
+      :style="{ 'background-color': columnBgColor }"
     >
-      <input
-        type="text"
-        class="column-title__text"
-        v-model="columnTitle"
-        ref="titleText"
-        @keyup.enter="titleTextBlur"
-        :class="{
-          'column-title__text--active': isTitleEditable,
-        }"
-        :tabindex="!isTitleEditable ? '-1' : '0'"
-      />
-      <button
-        @click="deleteColumn"
-        class="column__delete-btn"
-        :class="{
-          'column__delete-btn--show': isTitleEditable,
-        }"
-      >
-        &times;
-      </button>
-      <button
-        @click="editTitleText"
-        class="column__edit-btn"
-        :class="{
-          'column__edit-btn--active': isTitleEditable,
-        }"
-        title="Редактировать колонку"
-      ></button>
+      <label class="column-title__color">
+        <input
+          class="column-title__color-input"
+          type="color"
+          :value="columnBgColor"
+          @change="colorChangeHandler"
+        />
+      </label>
+      <div class="column-title__inner">
+        <input
+          type="text"
+          class="column-title__text"
+          v-model="columnTitle"
+          ref="titleText"
+          @keyup.enter="titleTextBlur"
+          :class="{
+            'column-title__text--active': isTitleEditable,
+          }"
+          :tabindex="!isTitleEditable ? '-1' : '0'"
+        />
+        <button
+          @click="deleteColumn"
+          class="column__delete-btn"
+          :class="{
+            'column__delete-btn--show': isTitleEditable,
+          }"
+        >
+          &times;
+        </button>
+        <button
+          @click="editTitleText"
+          class="column__edit-btn"
+          :class="{
+            'column__edit-btn--active': isTitleEditable,
+          }"
+          title="Редактировать колонку"
+        ></button>
+      </div>
     </div>
 
     <draggable
@@ -49,6 +59,7 @@
         :key="task.id"
         :colId="column.id"
         :id="task.id"
+        :bdLeftColor="columnBgColor"
         ref="taskItem"
       />
     </draggable>
@@ -70,17 +81,35 @@ export default {
   name: 'TaskListColumn',
   components: { Task, draggable },
 
-  props: ['column'],
+  props: {
+    column: {
+      type: Object,
+      default() {
+        return {
+          id: Date.now(),
+          title: '',
+          tasks: [],
+          bgColor: 'transparent',
+        }
+      },
+    },
+  },
 
   data: () => ({
-    initTitleStyleObj: {
-      borderLeftColor: 'transparent',
-    },
     isTitleEditable: false,
     isTaskDragging: false,
   }),
 
   methods: {
+    colorChangeHandler(event) {
+      if (event.target.value !== this.column.bgColor) {
+        this.$store.dispatch('changeColumnColor', {
+          id: this.column.id,
+          color: event.target.value,
+        })
+      }
+    },
+
     editTitleText() {
       this.isTitleEditable = !this.isTitleEditable
 
@@ -114,6 +143,7 @@ export default {
         id: Date.now(),
         category: this.columnTitle,
         text: '',
+        completed: false,
       }
       this.$store.dispatch('createTask', newTask)
       setTimeout(() => {
@@ -147,6 +177,13 @@ export default {
     isGrid() {
       return this.$store.getters.isGrid
     },
+    
+    columnBgColor() {
+      return (
+        this.$store.getters.getColumnBgColor(this.column.id) ||
+        this.column.bgColor
+      )
+    },
   },
 
   mounted() {
@@ -172,7 +209,7 @@ export default {
   // .column__header
   &__header {
     margin-bottom: 15px;
-    background-color: yellow;
+    background-color: $colorYellow;
     border-radius: 5px;
     box-shadow: 1px 1px 6px rgba(37, 34, 55, 0.4);
   }
@@ -180,18 +217,51 @@ export default {
   // .column-title
   &-title {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     max-width: 300px;
-    padding: 8px 12px 7px 20px;
-    border-left-width: 5px;
-    border-left-style: solid;
 
     &:hover {
       #{$column}__delete-btn {
         opacity: 0.5;
         transform: translateX(0);
       }
+      #{$column}-title__color {
+        opacity: 1;
+      }
+    }
+
+    // .column-title__inner
+    &__inner {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 7px 0;
+    }
+  }
+
+  // .color-title__color
+  .column-title__color {
+    flex-shrink: 0;
+    display: block;
+    width: 20px;
+    margin-right: 2px;
+    border-radius: 2px;
+    background-image: url(../assets/icons/dropper.svg);
+    background-repeat: no-repeat;
+    background-position: left 5px center;
+    background-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+
+    // .color-title__color-input
+    &-input {
+      width: 0;
+      height: 0;
+      opacity: 0;
+      visibility: hidden;
     }
 
     // .column-title--wide
@@ -203,6 +273,7 @@ export default {
   // .column-title__text
   &-title__text {
     flex: 1;
+    max-width: 200px;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
@@ -226,6 +297,7 @@ export default {
 
   // .column__delete-btn
   &__delete-btn {
+    flex-shrink: 0;
     display: block;
     width: 18px;
     height: 18px;
@@ -258,6 +330,7 @@ export default {
 
   // .column__edit-btn
   &__edit-btn {
+    flex-shrink: 0;
     width: 20px;
     height: 20px;
     border: none;
