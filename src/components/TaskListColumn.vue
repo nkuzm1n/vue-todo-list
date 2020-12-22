@@ -1,8 +1,8 @@
 <template>
   <div class="task-list__column column">
-    <div 
-      class="column__header column-title" 
-      :class="{'column-title--wide' : !isGrid}" 
+    <div
+      class="column__header column-title"
+      :class="{ 'column-title--wide': !isGrid }"
       :style="initTitleStyleObj"
     >
       <input
@@ -37,7 +37,7 @@
 
     <draggable
       class="column__wrapper"
-      :class="{'column__wrapper--wide' : !isGrid}"
+      :class="{ 'column__wrapper--wide': !isGrid }"
       group="tasks"
       :list="column.tasks"
       @add="updateColumnTasks"

@@ -1,7 +1,12 @@
 <template>
   <div class="task-list">
-    <div class="task-list__inner" :class="{'task-list__inner--row' : !isGrid}">
-      <div class="column__wrapper" v-for="col in tasksData" :key="col.id">
+    <div class="task-list__inner" :class="{ 'task-list__inner--row': !isGrid }">
+      <div
+        class="column__wrapper"
+        v-for="col in tasksData"
+        :key="col.id"
+        :class="{ 'column__wrapper--row': !isGrid }"
+      >
         <TaskListColumn :column="col" ref="column" />
       </div>
 
@@ -79,6 +84,11 @@ export default {
     min-height: 0;
     margin-right: 20px;
     padding-bottom: 20px;
+
+    // .column__wrapper--row
+    &--row {
+      flex: 1;
+    }
   }
 
   &__header {

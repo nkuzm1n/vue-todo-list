@@ -17,7 +17,7 @@ export default new Vuex.Store({
       isNew: false,
     },
     task: {},
-    settings: JSON.parse(localStorage.getItem('settings')) || settingsDefault
+    settings: JSON.parse(localStorage.getItem('AppSettings')) || settingsDefault
   },
 
   mutations: {
