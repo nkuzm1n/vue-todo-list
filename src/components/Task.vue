@@ -3,6 +3,7 @@
     class="task"
     :class="{
       'task-completed': isTaskCompleted,
+      'task--wide' : !isGrid
     }"
     :style="{ borderLeftColor: this.bdLeftColor }"
   >
@@ -169,6 +170,10 @@ export default {
       },
     },
 
+    isGrid() {
+      return this.$store.getters.isGrid
+    },
+
     isTaskCompleted() {
       const options = { colId: this.colId, id: this.id }
       return this.$store.getters.taskById(options).completed
@@ -201,6 +206,11 @@ export default {
   box-shadow: 1px 1px 6px rgba(37, 34, 55, 0.4);
   cursor: move;
 
+  // .task--wide
+  &--wide {
+    width: auto;
+  }
+  
   // .task-completed
   &-completed {
     :not(#{$task}__footer):not(#{$task}__delete-btn):not(#{$task}__complete-btn) {

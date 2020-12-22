@@ -3,6 +3,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const settingsDefault = {
+  filterOptions: {
+    grid: true,
+    orderBy: 'name'
+  }
+}
+
 const COLORS = ['#fee437', '#40976d']
 
 export default new Vuex.Store({
@@ -12,6 +19,7 @@ export default new Vuex.Store({
       isNew: false,
     },
     task: {},
+    settings: JSON.parse(localStorage.getItem('AppSettings')) || settingsDefault
   },
 
   mutations: {
@@ -119,6 +127,12 @@ export default new Vuex.Store({
       localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
     },
 
+    changeGrid(state) {
+      state.settings.filterOptions.grid = !state.settings.filterOptions.grid
+
+      localStorage.setItem('AppSettings', JSON.stringify(state.settings))
+    },
+
     changeColumnColor(state, { id, color }) {
       const colsData = [...state.tasksData]
       const idx = colsData.findIndex(col => col.id === id)
@@ -153,6 +167,9 @@ export default new Vuex.Store({
     deleteColumn({ commit }, id) {
       commit('deleteColumn', id)
     },
+    filterByGrid({ commit }) {
+      commit('changeGrid')
+    },
     changeColumnColor({ commit }, options) {
       commit('changeColumnColor', options)
     },
@@ -166,6 +183,7 @@ export default new Vuex.Store({
         .find(col => col.id === colId)
         ?.tasks.find(task => task.id === id),
     isNewColAdded: s => s.column.isNew,
+    isGrid: s => s.settings.filterOptions.grid,
     getColumnBgColor: s => id =>
       s.tasksData.find(col => col.id === id)?.bgColor,
   },

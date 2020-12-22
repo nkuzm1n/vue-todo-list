@@ -2,6 +2,7 @@
   <div class="task-list__column column">
     <div
       class="column__header column-title"
+      :class="{ 'column-title--wide': !isGrid }"
       :style="{ 'background-color': columnBgColor }"
     >
       <label class="column-title__color">
@@ -45,6 +46,8 @@
     </div>
 
     <draggable
+      class="column__wrapper"
+      :class="{ 'column__wrapper--wide': !isGrid }"
       group="tasks"
       :list="column.tasks"
       @add="updateColumnTasks"
@@ -170,6 +173,11 @@ export default {
         this.$store.dispatch('setColumnTitle', colData)
       },
     },
+
+    isGrid() {
+      return this.$store.getters.isGrid
+    },
+    
     columnBgColor() {
       return (
         this.$store.getters.getColumnBgColor(this.column.id) ||
@@ -192,6 +200,11 @@ export default {
 
 .column {
   $column: &;
+
+  // .column__wrapper--wide
+  &__wrapper--wide {
+    margin-right: 0;
+  }
 
   // .column__header
   &__header {
@@ -249,6 +262,11 @@ export default {
       height: 0;
       opacity: 0;
       visibility: hidden;
+    }
+
+    // .column-title--wide
+    &--wide {
+      max-width: none;
     }
   }
 

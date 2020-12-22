@@ -11,13 +11,17 @@
       </div>
       <button
         type="submit"
-        class="filter-form__btn filter-form__btn-grid filter-form__btn--active"
+        class="filter-form__btn filter-form__btn-grid"
         title="В сетку"
+        :class="{ 'filter-form__btn--active': isGrid }"
+        @click.prevent="buildCell"
       ></button>
       <button
         type="submit"
         class="filter-form__btn filter-form__btn-list"
         title="Списком"
+        :class="{ 'filter-form__btn--active': !isGrid }"
+        @click.prevent="buildRow"
       ></button>
       <button
         type="submit"
@@ -41,6 +45,19 @@
 <script>
 export default {
   name: 'FilterBar',
+  methods: {
+    buildCell() {
+      !this.isGrid && this.$store.dispatch('filterByGrid')
+    },
+    buildRow() {
+      this.isGrid && this.$store.dispatch('filterByGrid')
+    },
+  },
+  computed: {
+    isGrid() {
+      return this.$store.getters.isGrid
+    },
+  },
 }
 </script>
 
@@ -79,6 +96,7 @@ export default {
   display: flex;
   align-items: center;
 
+  // filter-form-select
   &-select {
     flex-basis: 200px;
     border-radius: 20px;
@@ -107,9 +125,18 @@ export default {
   }
 
   // FIXME: совместить похожие стили сюда
+  // filter-form__btn
   &__btn {
     transition: opacity 0.2s linear;
 
+    &:hover:not(.filter-form__btn--active) {
+      opacity: 1;
+    }
+
+    &:focus {
+      outline: none;
+    }
+    
     &:hover {
       opacity: 1;
     }
