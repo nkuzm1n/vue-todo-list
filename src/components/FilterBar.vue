@@ -6,7 +6,7 @@
         <select id="filter-form-select" title="Фильтр">
           <option value="completed">Завершенные</option>
           <option value="inwork">В работе</option>
-          <option value="all">Все</option>
+          <option value="all" selected>Все</option>
         </select>
       </div>
       <button
@@ -28,7 +28,7 @@
       </button>
       <button
         type="submit"
-        class="filter--form__btn filter-form__btn-bystatus"
+        class="filter-form__btn filter-form__btn-bystatus"
         title="По статусу"
       >
         По статусу
@@ -65,7 +65,7 @@ export default {
   // filter-bar__title
   &__title {
     margin-right: 40px;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 1.6rem;
     color: $colorDark;
   }
@@ -110,8 +110,8 @@ export default {
   &__btn {
     transition: opacity 0.2s linear;
 
-    &:hover:not(.filter-form__btn--active) {
-      opacity: 0.7;
+    &:hover {
+      opacity: 1;
     }
   }
 
@@ -138,22 +138,24 @@ export default {
   }
 
   &__btn-byname {
+    display: none;
     margin-left: 40px;
     padding: 1px 0;
     border: none;
     background-color: transparent;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 1.6rem;
     opacity: 0.5;
     cursor: pointer;
   }
 
   &__btn-bystatus {
+    display: none;
     margin-left: 40px;
     padding: 1px 0;
     border: none;
     background-color: transparent;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 1.6rem;
     opacity: 0.5;
     cursor: pointer;
@@ -169,7 +171,7 @@ export default {
   border: none;
   border-radius: 5px;
   background-color: #42bf83;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1.6rem;
   line-height: 19px;
   color: #efffff;

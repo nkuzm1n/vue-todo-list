@@ -27,7 +27,7 @@ body {
   font-size: 1.6rem;
 }
 #app {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

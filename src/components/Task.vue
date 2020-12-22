@@ -1,11 +1,18 @@
 <template>
-  <div class="task" :style="{ borderLeftColor: this.bdLeftColor }">
+  <div
+    class="task"
+    :class="{
+      'task-completed': isTaskCompleted,
+    }"
+    :style="{ borderLeftColor: this.bdLeftColor }"
+  >
     <div class="task__header">
       <input
         type="text"
         class="task__category"
         ref="taskCategory"
         v-model="taskCategory"
+        @keypress.enter="titleKeypressHandler"
         :disabled="!isTaskEditable"
       />
       <button
@@ -32,10 +39,13 @@
       rows="1"
     ></textarea>
 
-    <!--        <div class="task__footer">-->
-    <!--            <button class="task__time-btn">01:12:00</button>-->
-    <!--            <button class="task__complete-btn">Завершить</button>-->
-    <!--        </div>-->
+    <div class="task__footer">
+      <button class="task__time-btn">00:00:00</button>
+      <span class="task__footer-line"></span>
+      <button class="task__complete-btn" @click="completeBtnClickHandler">
+        {{ isTaskCompleted ? 'Завершено' : 'Завершить' }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -69,15 +79,6 @@ export default {
   }),
 
   methods: {
-    capitalizeText(text) {
-      // if (!text || text.length < 1) {
-      //   return ''
-      // }
-      // text = text.toString()
-      // return text.charAt(0).toUpperCase() + text.slice(1)
-      return text
-    },
-
     focusCategory() {
       this.isTaskEditable = true
       const listener = ({ target }) => {
@@ -88,6 +89,10 @@ export default {
       }
       document.addEventListener('click', listener)
       setTimeout(() => this.$refs.textarea.focus(), 0)
+    },
+
+    titleKeypressHandler() {
+      this.$refs.taskCategory.blur()
     },
 
     editTaskHandler() {
@@ -109,6 +114,15 @@ export default {
       if (confirm('Удалить таск?')) {
         this.$store.dispatch('deleteTask', { colId: this.colId, id: this.id })
       }
+    },
+
+    completeBtnClickHandler() {
+      const options = { colId: this.colId, id: this.id }
+      const isTaskCompleted = this.$store.getters.taskById(options).completed
+      this.$store.dispatch('updateTask', {
+        ...options,
+        completed: !isTaskCompleted,
+      })
     },
 
     areaAutoHeight() {
@@ -136,6 +150,7 @@ export default {
         this.$store.dispatch('updateTask', options)
       },
     },
+
     taskText: {
       get() {
         const params = {
@@ -152,6 +167,11 @@ export default {
         }
         this.$store.dispatch('updateTask', options)
       },
+    },
+
+    isTaskCompleted() {
+      const options = { colId: this.colId, id: this.id }
+      return this.$store.getters.taskById(options).completed
     },
   },
 
@@ -173,13 +193,25 @@ export default {
   width: 300px;
   min-height: 100px;
   margin-bottom: 15px;
-  padding: 13px 12px 20px 21px;
+  padding: 13px 12px 5px 21px;
   background-color: #ffffff;
   border-radius: 5px;
   border-left-width: 5px;
   border-left-style: solid;
   box-shadow: 1px 1px 6px rgba(37, 34, 55, 0.4);
   cursor: move;
+
+  // .task-completed
+  &-completed {
+    :not(#{$task}__footer):not(#{$task}__delete-btn):not(#{$task}__complete-btn) {
+      opacity: 0.6;
+    }
+
+    #{$task}__category,
+    #{$task}__text {
+      text-decoration: line-through;
+    }
+  }
 
   // .task__header
   &__header {
@@ -199,6 +231,7 @@ export default {
   // .task__category
   &__category {
     flex: 1;
+    max-width: 200px;
     min-height: 14px;
     padding-left: 25px;
     padding-bottom: 5px;
@@ -208,7 +241,7 @@ export default {
       1px;
     background-size: 14px;
     color: $colorDark;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14px;
     line-height: 16px;
     opacity: 0.55;
@@ -225,6 +258,7 @@ export default {
 
   // .task__delete-btn
   &__delete-btn {
+    flex-shrink: 0;
     display: block;
     width: 18px;
     height: 18px;
@@ -243,7 +277,6 @@ export default {
 
     &:hover {
       background-color: red;
-      //border: 1px solid #ff0000;
       color: white;
       opacity: 1 !important;
     }
@@ -257,8 +290,9 @@ export default {
 
   // .task__edit-btn
   &__edit-btn {
-    width: 18px;
-    height: 18px;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
     border: none;
     background-color: transparent;
     background-image: url(../assets/icons/edit.svg);
@@ -286,7 +320,7 @@ export default {
     border: none;
     border-bottom: 1px solid transparent;
     color: $colorDark;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 16px;
     line-height: 20px;
     overflow: hidden;
@@ -313,7 +347,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     margin-top: 14px;
-    padding: 5px 18px;
     border-top: 1px solid #dddddd;
   }
 
@@ -321,6 +354,7 @@ export default {
   &__time-btn,
   &__complete-btn {
     height: 30px;
+    padding-left: 34px;
     border: none;
     background-color: transparent;
     background-repeat: no-repeat;
@@ -333,35 +367,39 @@ export default {
 
   // .task__time-btn
   &__time-btn {
-    flex: 1 1 50%;
     padding-right: 5px;
-    padding-left: 44px;
-    border-right: 1px solid #dddddd;
     background-image: url(../assets/icons/play.svg);
     background-position: left center;
     text-align: left;
-    opacity: 0.6;
+    font-weight: 400;
+    opacity: 0.8;
 
     &:hover {
-      opacity: 0.75;
+      opacity: 1;
     }
   }
 
   // .task__complete-btn
   &__complete-btn {
-    flex: 1 1 calc(50% - 1px);
-    padding-left: 44px;
     padding-right: 0;
     background-image: url(../assets/icons/clock.svg);
-    background-position: left 10px center;
+    background-position: left center;
     color: #40976d;
     text-align: right;
-    opacity: 0.9;
+    font-weight: 600;
+    opacity: 1;
 
     &:hover {
-      color: darken(#40976d, 2%);
+      color: darken(#40976d, 3%);
       opacity: 1;
     }
+  }
+
+  // .task__footer-line
+  &__footer-line {
+    flex: 0 0 1px;
+    height: 30px;
+    background-color: #dddddd;
   }
 }
 </style>
