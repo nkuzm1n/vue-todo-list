@@ -10,6 +10,8 @@ const settingsDefault = {
   }
 }
 
+const COLORS = ['#fee437', '#40976d']
+
 export default new Vuex.Store({
   state: {
     tasksData: JSON.parse(localStorage.getItem('tasksData') || '[]'),
@@ -27,6 +29,7 @@ export default new Vuex.Store({
         id: task.id,
         category: task.category,
         text: task.text,
+        completed: task.completed,
       }
 
       if (tData.length) {
@@ -51,7 +54,7 @@ export default new Vuex.Store({
       localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
     },
 
-    updateTask(state, { colId, id, category, text }) {
+    updateTask(state, { colId, id, category, text, completed }) {
       const colsData = [...state.tasksData]
       const colIndex = colsData.findIndex(col => col.id === colId)
       const taskIndex = colsData[colIndex].tasks.findIndex(
@@ -62,6 +65,9 @@ export default new Vuex.Store({
       }
       if (text !== undefined) {
         colsData[colIndex].tasks[taskIndex].text = text
+      }
+      if (completed !== undefined) {
+        colsData[colIndex].tasks[taskIndex].completed = completed
       }
       state.tasksData = colsData
       localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
@@ -84,7 +90,9 @@ export default new Vuex.Store({
         id: options.id || Date.now(),
         title: options.title || 'Без названия',
         tasks: options.tasks || [],
+        bgColor: '#fee437', // COLORS[Math.floor(Math.random() * COLORS.length)],
       }
+
       colsData.push(col)
       state.tasksData = colsData
       localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
@@ -94,8 +102,7 @@ export default new Vuex.Store({
     updateColumnTasks(state, columnData) {
       const colsData = [...state.tasksData]
       const colIndex = colsData.findIndex(col => col.id === columnData.id)
-      const tasks = [...columnData.tasks]
-      colsData[colIndex].tasks = tasks
+      colsData[colIndex].tasks = [...columnData.tasks]
       state.tasksData = colsData
       localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
     },
@@ -124,7 +131,15 @@ export default new Vuex.Store({
       state.settings.filterOptions.grid = !state.settings.filterOptions.grid
 
       localStorage.setItem('AppSettings', JSON.stringify(state.settings))
-    }
+    },
+
+    changeColumnColor(state, { id, color }) {
+      const colsData = [...state.tasksData]
+      const idx = colsData.findIndex(col => col.id === id)
+      colsData[idx].bgColor = color
+      state.tasksData = colsData
+      localStorage.setItem('tasksData', JSON.stringify(state.tasksData))
+    },
   },
 
   actions: {
@@ -154,7 +169,10 @@ export default new Vuex.Store({
     },
     filterByGrid({ commit }) {
       commit('changeGrid')
-    }
+    },
+    changeColumnColor({ commit }, options) {
+      commit('changeColumnColor', options)
+    },
   },
 
   getters: {
@@ -165,6 +183,8 @@ export default new Vuex.Store({
         .find(col => col.id === colId)
         ?.tasks.find(task => task.id === id),
     isNewColAdded: s => s.column.isNew,
-    isGrid: s => s.settings.filterOptions.grid
+    isGrid: s => s.settings.filterOptions.grid,
+    getColumnBgColor: s => id =>
+      s.tasksData.find(col => col.id === id)?.bgColor,
   },
 })
