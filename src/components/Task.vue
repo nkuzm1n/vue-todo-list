@@ -73,15 +73,6 @@ export default {
   }),
 
   methods: {
-    capitalizeText(text) {
-      // if (!text || text.length < 1) {
-      //   return ''
-      // }
-      // text = text.toString()
-      // return text.charAt(0).toUpperCase() + text.slice(1)
-      return text
-    },
-
     focusCategory() {
       this.isTaskEditable = true
       const listener = ({ target }) => {
