@@ -231,6 +231,11 @@ export default {
       }
     }
 
+    // .column-title--wide
+    &--wide {
+      max-width: none;
+    }
+
     // .column-title__inner
     &__inner {
       flex: 1;
@@ -262,11 +267,6 @@ export default {
       height: 0;
       opacity: 0;
       visibility: hidden;
-    }
-
-    // .column-title--wide
-    &--wide {
-      max-width: none;
     }
   }
 
