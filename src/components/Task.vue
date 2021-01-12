@@ -3,7 +3,7 @@
     class="task"
     :class="{
       'task-completed': isTaskCompleted,
-      'task--wide' : !isGrid
+      'task--wide': !isGrid,
     }"
     :style="{ borderLeftColor: this.bdLeftColor }"
   >
@@ -14,6 +14,9 @@
         ref="taskCategory"
         v-model="taskCategory"
         @keypress.enter="titleKeypressHandler"
+        :class="{
+          'task__category--wide': !isGrid,
+        }"
         :disabled="!isTaskEditable"
       />
       <button
@@ -210,7 +213,7 @@ export default {
   &--wide {
     width: auto;
   }
-  
+
   // .task-completed
   &-completed {
     :not(#{$task}__footer):not(#{$task}__delete-btn):not(#{$task}__complete-btn) {
@@ -263,6 +266,11 @@ export default {
 
     &:disabled {
       cursor: move;
+    }
+
+    // .task__category--wide
+    &--wide {
+      max-width: none;
     }
   }
 

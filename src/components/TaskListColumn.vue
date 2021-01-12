@@ -22,6 +22,7 @@
           @keyup.enter="titleTextBlur"
           :class="{
             'column-title__text--active': isTitleEditable,
+            'column-title__text--wide': !isGrid,
           }"
           :tabindex="!isTitleEditable ? '-1' : '0'"
         />
@@ -177,7 +178,7 @@ export default {
     isGrid() {
       return this.$store.getters.isGrid
     },
-    
+
     columnBgColor() {
       return (
         this.$store.getters.getColumnBgColor(this.column.id) ||
@@ -292,6 +293,12 @@ export default {
     // .column-title__text--active
     &--active {
       pointer-events: all;
+    }
+
+    // .column-title__text--wide
+    &--wide {
+      margin-right: 10px;
+      max-width: none;
     }
   }
 
