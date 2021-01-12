@@ -6,8 +6,8 @@ Vue.use(Vuex)
 const settingsDefault = {
   filterOptions: {
     grid: true,
-    orderBy: 'name'
-  }
+    orderBy: 'name',
+  },
 }
 
 const COLORS = ['#fee437', '#40976d']
@@ -19,7 +19,8 @@ export default new Vuex.Store({
       isNew: false,
     },
     task: {},
-    settings: JSON.parse(localStorage.getItem('AppSettings')) || settingsDefault
+    settings:
+      JSON.parse(localStorage.getItem('AppSettings')) || settingsDefault,
   },
 
   mutations: {
