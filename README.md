@@ -1,5 +1,7 @@
 # vue-cool-todo-list
 
+https://nkuzm1n.github.io/vue-todo-list/dist/
+
 ## Project setup
 ```
 npm install
